@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
-    // Show Checkout Page
     public function index()
     {
         $carts = Cart::with('product')
@@ -21,7 +20,7 @@ class CheckoutController extends Controller
 
         if ($carts->isEmpty()) {
             return redirect()->route('cart.index')
-                ->with('success', 'Your cart is empty.');
+                ->with('error', 'Your cart is empty.');
         }
 
         $total = 0;
@@ -33,9 +32,16 @@ class CheckoutController extends Controller
         return view('customer.checkout.index', compact('carts', 'total'));
     }
 
-    // Place Order
     public function store(Request $request)
     {
+        $request->validate([
+            'customer_name' => 'required|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|max:20',
+            'shipping_address' => 'required',
+            'payment_method' => 'required',
+        ]);
+
         $carts = Cart::with('product')
             ->where('user_id', Auth::id())
             ->get();
@@ -56,9 +62,13 @@ class CheckoutController extends Controller
 
             $order = Order::create([
                 'user_id' => Auth::id(),
+                'customer_name' => $request->customer_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'shipping_address' => $request->shipping_address,
+                'payment_method' => $request->payment_method,
                 'total_amount' => $total,
                 'status' => 'Pending',
-                'payment_method' => 'Cash on Delivery',
             ]);
 
             foreach ($carts as $cart) {
@@ -77,13 +87,13 @@ class CheckoutController extends Controller
             DB::commit();
 
             return redirect()->route('orders.index')
-                ->with('success', 'Order placed successfully!');
+                ->with('success', 'Order placed successfully.');
 
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            return back()->with('error', 'Something went wrong.');
+            return back()->with('error', $e->getMessage());
 
         }
     }

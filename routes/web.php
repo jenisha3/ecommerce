@@ -5,12 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
-// Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 
-// Customer Controllers
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Customer\ShopController;
 use App\Http\Controllers\Customer\CartController;
@@ -49,11 +47,9 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    // Customer Dashboard
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Cart
     Route::get('/cart', [CartController::class, 'index'])
         ->name('cart.index');
 
@@ -94,5 +90,8 @@ Route::get('/checkout', [CheckoutController::class, 'index'])
 Route::post('/checkout/place-order', [CheckoutController::class, 'store'])
     ->name('checkout.store');
 
-    Route::get('/orders', [OrderController::class, 'index'])
+   Route::get('/orders', [OrderController::class, 'index'])
     ->name('orders.index');
+
+Route::get('/orders/{order}', [OrderController::class, 'show'])
+    ->name('orders.show');
