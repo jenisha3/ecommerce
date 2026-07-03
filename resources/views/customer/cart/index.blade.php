@@ -4,14 +4,24 @@
     <title>My Cart</title>
 </head>
 <body>
+
 <h1>My Cart</h1>
-<a href="{{ route('shop') }}"> Continue Shopping</a>
+
+<a href="{{ route('shop') }}">Continue Shopping</a>
 
 <hr>
 
+{{-- Success Message --}}
 @if(session('success'))
     <p style="color:green;">
         {{ session('success') }}
+    </p>
+@endif
+
+{{-- Error Message --}}
+@if(session('error'))
+    <p style="color:red;">
+        {{ session('error') }}
     </p>
 @endif
 
@@ -23,12 +33,22 @@
         <th>Product</th>
         <th>Image</th>
         <th>Price</th>
+        <th>Available Stock</th>
         <th>Quantity</th>
         <th>Total</th>
         <th>Action</th>
     </tr>
 
+    @php
+        $grandTotal = 0;
+    @endphp
+
     @foreach($carts as $cart)
+
+    @php
+        $total = $cart->product->price * $cart->quantity;
+        $grandTotal += $total;
+    @endphp
 
     <tr>
 
@@ -36,20 +56,23 @@
 
         <td>
             @if($cart->product->image)
-                <img src="{{ asset('storage/'.$cart->product->image) }}"
-                     width="80">
+                <img src="{{ asset('storage/'.$cart->product->image) }}" width="80">
             @else
                 No Image
             @endif
         </td>
 
         <td>
-            Rs. {{ number_format($cart->product->price, 2) }}
+            Rs. {{ number_format($cart->product->price,2) }}
+        </td>
+
+        <td>
+            {{ $cart->product->stock }}
         </td>
 
         <td>
 
-            <form action="{{ route('cart.update', $cart->id) }}" method="POST">
+            <form action="{{ route('cart.update',$cart->id) }}" method="POST">
 
                 @csrf
                 @method('PATCH')
@@ -58,7 +81,9 @@
                     type="number"
                     name="quantity"
                     value="{{ $cart->quantity }}"
-                    min="1">
+                    min="1"
+                    max="{{ $cart->product->stock }}"
+                >
 
                 <button type="submit">
                     Update
@@ -69,12 +94,12 @@
         </td>
 
         <td>
-            Rs. {{ number_format($cart->product->price * $cart->quantity, 2) }}
+            Rs. {{ number_format($total,2) }}
         </td>
 
         <td>
 
-            <form action="{{ route('cart.destroy', $cart->id) }}" method="POST">
+            <form action="{{ route('cart.destroy',$cart->id) }}" method="POST">
 
                 @csrf
                 @method('DELETE')
@@ -97,19 +122,9 @@
 
 <br>
 
-@php
-    $grandTotal = 0;
-@endphp
-
-@foreach($carts as $cart)
-    @php
-        $grandTotal += $cart->product->price * $cart->quantity;
-    @endphp
-@endforeach
-
 <h3>
-    Grand Total:
-    Rs. {{ number_format($grandTotal, 2) }}
+    Grand Total :
+    Rs. {{ number_format($grandTotal,2) }}
 </h3>
 
 <br>

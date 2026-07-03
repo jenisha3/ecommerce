@@ -10,7 +10,7 @@
     <p style="color:green;">{{ session('success') }}</p>
 @endif
 
-<a href="{{ route('products.create') }}">Add Product</a>
+<a href="{{ route('admin.products.create') }}">Add Product</a>
 
 <br><br>
 
@@ -50,7 +50,28 @@
 
         <td>{{ $product->discount_price }}</td>
 
-        <td>{{ $product->stock }}</td>
+        <td>
+    {{ $product->stock }}
+
+    <br>
+
+    @if($product->stock == 0)
+        <span style="color:red;">
+            Out of Stock
+        </span>
+
+    @elseif($product->stock <= 5)
+        <span style="color:orange;">
+            Low Stock
+        </span>
+
+    @else
+        <span style="color:green;">
+            In Stock
+        </span>
+    @endif
+
+</td>
 
         <td>{{ $product->featured ? 'Yes' : 'No' }}</td>
 
@@ -58,11 +79,11 @@
 
         <td>
 
-            <a href="{{ route('products.show',$product->id) }}">View</a> |
+            <a href="{{ route('admin.products.show', $product->id) }}">View</a> |
 
-            <a href="{{ route('products.edit',$product->id) }}">Edit</a> |
+            <a href="{{ route('admin.products.edit', $product->id) }}">Edit</a> |
 
-            <form action="{{ route('products.destroy',$product->id) }}"
+            <form action="{{ route('admin.products.destroy', $product->id) }}"
                   method="POST"
                   style="display:inline;">
 

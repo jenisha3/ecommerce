@@ -14,7 +14,7 @@
     </ul>
 @endif
 
-<form action="{{ route('categories.store') }}" method="POST">
+<form action="{{ route('admin.categories.store') }}" method="POST">
     @csrf
 
     <label>Category Name</label>
@@ -30,11 +30,8 @@
     <button type="submit">Save Category</button>
 
 </form>
-
 <br>
-
-<a href="{{ route('categories.index') }}">
+<a href="{{ route('admin.categories.index') }}">
     Back to Categories
 </a>
-
 @endsection

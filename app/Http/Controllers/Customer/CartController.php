@@ -23,36 +23,66 @@ class CartController extends Controller
     // Add Product to Cart
     public function store(Product $product)
     {
-        $cart = Cart::where('user_id', Auth::id())
-            ->where('product_id', $product->id)
-            ->first();
+    $cart = Cart::where('user_id', Auth::id())
+        ->where('product_id', $product->id)
+        ->first();
 
-        if ($cart) {
-            $cart->increment('quantity');
-        } else {
-            Cart::create([
-                'user_id' => Auth::id(),
-                'product_id' => $product->id,
-                'quantity' => 1,
-            ]);
+    if ($cart) {
+
+        // checks stock before increasing quantity
+        if ($cart->quantity >= $product->stock) {
+
+            return redirect()->back()->with(
+                'error',
+                'Only '.$product->stock.' item(s) available in stock.'
+            );
         }
 
-        return redirect()->route('cart.index')
-            ->with('success', 'Product added to cart successfully.');
+        $cart->increment('quantity');
+
+    } else {
+
+        if ($product->stock < 1) {
+
+            return redirect()->back()->with(
+                'error',
+                'This product is out of stock.'
+            );
+        }
+
+        Cart::create([
+            'user_id' => Auth::id(),
+            'product_id' => $product->id,
+            'quantity' => 1,
+        ]);
+    }
+
+    return redirect()->back()->with(
+        'success',
+        'Product added to cart successfully.'
+    );
     }
 
     // Update Quantity
     public function update(Request $request, Cart $cart)
     {
-        $request->validate([
-            'quantity' => 'required|integer|min:1',
-        ]);
+    $request->validate([
+        'quantity' => 'required|integer|min:1',
+    ]);
 
-        $cart->update([
-            'quantity' => $request->quantity,
-        ]);
+    if ($request->quantity > $cart->product->stock) {
 
-        return back()->with('success', 'Cart updated successfully.');
+        return back()->with(
+            'error',
+            'Only '.$cart->product->stock.' items are available in stock.'
+        );
+    }
+
+    $cart->update([
+        'quantity' => $request->quantity,
+    ]);
+
+    return back()->with('success', 'Cart updated successfully.');
     }
 
     // Remove Item

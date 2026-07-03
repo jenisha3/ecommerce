@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
+    
     public function index()
     {
         $carts = Cart::with('product')
@@ -19,7 +20,8 @@ class CheckoutController extends Controller
             ->get();
 
         if ($carts->isEmpty()) {
-            return redirect()->route('cart.index')
+            return redirect()
+                ->route('cart.index')
                 ->with('error', 'Your cart is empty.');
         }
 
@@ -32,6 +34,7 @@ class CheckoutController extends Controller
         return view('customer.checkout.index', compact('carts', 'total'));
     }
 
+   
     public function store(Request $request)
     {
         $request->validate([
@@ -47,7 +50,9 @@ class CheckoutController extends Controller
             ->get();
 
         if ($carts->isEmpty()) {
-            return redirect()->route('cart.index');
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Your cart is empty.');
         }
 
         DB::beginTransaction();
@@ -57,6 +62,21 @@ class CheckoutController extends Controller
             $total = 0;
 
             foreach ($carts as $cart) {
+
+                if ($cart->quantity > $cart->product->stock) {
+
+                    DB::rollBack();
+
+                    return redirect()
+                        ->route('cart.index')
+                        ->with(
+                            'error',
+                            'Only ' . $cart->product->stock .
+                            ' item(s) available for ' .
+                            $cart->product->name
+                        );
+                }
+
                 $total += $cart->product->price * $cart->quantity;
             }
 
@@ -80,21 +100,23 @@ class CheckoutController extends Controller
                     'price' => $cart->product->price,
                 ]);
 
+                $cart->product->decrement('stock', $cart->quantity);
             }
 
             Cart::where('user_id', Auth::id())->delete();
 
             DB::commit();
 
-            return redirect()->route('orders.index')
+            return redirect()
+                ->route('orders.index')
                 ->with('success', 'Order placed successfully.');
-
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            return back()->with('error', $e->getMessage());
-
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Something went wrong. Please try again.');
         }
     }
 }

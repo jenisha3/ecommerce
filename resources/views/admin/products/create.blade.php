@@ -20,7 +20,7 @@
 
 @endif
 
-<form action="{{ route('products.store') }}"
+<form action="{{ route('admin.products.store') }}"
       method="POST"
       enctype="multipart/form-data">
 

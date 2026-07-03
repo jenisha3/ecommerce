@@ -1,24 +1,31 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Customer\CartController;
-use App\Http\Controllers\Customer\CheckoutController;
-use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
-use App\Http\Controllers\Customer\OrderController;
-use App\Http\Controllers\Customer\ShopController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [ShopController::class, 'index'])->name('shop');
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\CustomerController;
+
+use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
+use App\Http\Controllers\Customer\ShopController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
+
+Route::get('/', [ShopController::class, 'index'])
+    ->name('shop');
 
 Route::get('/product/{product}', [ShopController::class, 'show'])
     ->name('shop.product');
 
 Route::get('/category/{category}', [ShopController::class, 'category'])
     ->name('shop.category');
+
 
 Route::middleware('guest')->group(function () {
 
@@ -33,18 +40,16 @@ Route::middleware('guest')->group(function () {
 
     Route::post('/login', [LoginController::class, 'store'])
         ->name('login.store');
+
 });
+
+
 
 Route::middleware('auth')->group(function () {
 
-    Route::post('/logout', [LoginController::class, 'destroy'])
-        ->name('logout');
-});
-
-Route::middleware(['auth', 'role:Customer'])->group(function () {
-
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])
         ->name('dashboard');
+
 
     Route::get('/cart', [CartController::class, 'index'])
         ->name('cart.index');
@@ -57,33 +62,44 @@ Route::middleware(['auth', 'role:Customer'])->group(function () {
 
     Route::delete('/cart/{cart}', [CartController::class, 'destroy'])
         ->name('cart.destroy');
+
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])
+        ->name('checkout.index');
+
+    Route::post('/checkout/place-order', [CheckoutController::class, 'store'])
+        ->name('checkout.store');
+
+
+    Route::get('/orders', [CustomerOrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])
+        ->name('orders.show');
+
+
+    Route::post('/logout', [LoginController::class, 'destroy'])
+        ->name('logout');
+
 });
-
-
 
 Route::middleware(['auth', 'role:Admin'])
     ->prefix('admin')
+    ->as('admin.')
     ->group(function () {
 
+
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('admin.dashboard');
+            ->name('dashboard');
 
-        // Category Management
+
         Route::resource('categories', CategoryController::class);
-
-        // Product Management
+        
         Route::resource('products', ProductController::class);
-    });
 
-// Checkout
-Route::get('/checkout', [CheckoutController::class, 'index'])
-    ->name('checkout.index');
+        Route::resource('orders', AdminOrderController::class);
 
-Route::post('/checkout/place-order', [CheckoutController::class, 'store'])
-    ->name('checkout.store');
+        Route::resource('customers', CustomerController::class)
+            ->only(['index', 'show', 'destroy']);
 
-Route::get('/orders', [OrderController::class, 'index'])
-    ->name('orders.index');
-
-Route::get('/orders/{order}', [OrderController::class, 'show'])
-    ->name('orders.show');
+});

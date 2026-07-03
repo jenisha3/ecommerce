@@ -1,81 +1,64 @@
-@extends('layouts.admin')
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Categories</title>
+</head>
+<body>
 
-@section('title', 'Categories')
+<h1>Category List</h1>
 
-@section('content')
-
-<h2>Category List</h2>
-
-@if(session('success'))
-    <p style="color:green;">
-        {{ session('success') }}
-    </p>
-@endif
-
-<a href="{{ route('categories.create') }}">
-    Add Category
-</a>
+<a href="{{ route('admin.categories.create') }}">Add Category</a>
 
 <br><br>
 
-<table border="1" cellpadding="10" cellspacing="0">
+@if(session('success'))
+    <p>{{ session('success') }}</p>
+@endif
 
+<table border="1" cellpadding="10">
     <tr>
         <th>ID</th>
         <th>Name</th>
         <th>Slug</th>
         <th>Description</th>
-        <th>Actions</th>
+        <th>Action</th>
     </tr>
 
     @forelse($categories as $category)
+    <tr>
+        <td>{{ $category->id }}</td>
+        <td>{{ $category->name }}</td>
+        <td>{{ $category->slug }}</td>
+        <td>{{ $category->description }}</td>
+        <td>
 
-        <tr>
+            <a href="{{ route('admin.categories.edit', $category->id) }}">
+                Edit
+            </a>
 
-            <td>{{ $category->id }}</td>
+            |
 
-            <td>{{ $category->name }}</td>
+            <form action="{{ route('admin.categories.destroy', $category->id) }}"
+                  method="POST"
+                  style="display:inline;">
+                @csrf
+                @method('DELETE')
 
-            <td>{{ $category->slug }}</td>
+                <button type="submit"
+                        onclick="return confirm('Delete this category?')">
+                    Delete
+                </button>
+            </form>
 
-            <td>{{ $category->description }}</td>
-
-            <td>
-
-                <a href="{{ route('categories.edit', $category->id) }}">
-                    Edit
-                </a>
-
-                |
-
-                <form action="{{ route('categories.destroy', $category->id) }}"
-                      method="POST"
-                      style="display:inline;">
-
-                    @csrf
-                    @method('DELETE')
-
-                    <button type="submit"
-                            onclick="return confirm('Are you sure you want to delete this category?')">
-                        Delete
-                    </button>
-
-                </form>
-
-            </td>
-
-        </tr>
-
+        </td>
+    </tr>
     @empty
-
-        <tr>
-            <td colspan="5">
-                No Categories Found.
-            </td>
-        </tr>
-
+    <tr>
+        <td colspan="5">No Categories Found.</td>
+    </tr>
     @endforelse
 
 </table>
 
-@endsection
+</body>
+</html>

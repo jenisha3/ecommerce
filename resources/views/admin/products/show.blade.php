@@ -33,7 +33,7 @@ width="180">
 
 <br><br>
 
-<a href="{{ route('products.index') }}">
+<a href="{{ route('admin.products.index') }}">
     Back
 </a>
 

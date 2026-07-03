@@ -12,25 +12,28 @@
 </p>
 <hr>
 <hr>
-
 <h3>Admin Menu</h3>
-
 <ul>
     <li>
         <a href="{{ route('admin.dashboard') }}">Dashboard</a>
     </li>
 
     <li>
-        <a href="{{ route('categories.index') }}">Categories</a>
+        <a href="{{ route('admin.categories.index') }}">Categories</a>
     </li>
 
     <li>
-        <a href="{{ route('products.index') }}">Products</a>
+        <a href="{{ route('admin.products.index') }}">Products</a>
     </li>
+    <li>
+        <a href="{{ route('admin.orders.index') }}">Orders</a>
+    </li>
+    <li>
+    <a href="{{ route('admin.inventory.index') }}">Inventory </a>
+</li>
+
 </ul>
-
 <hr>
-
 @yield('content')
 
 </body>

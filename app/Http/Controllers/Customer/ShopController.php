@@ -8,9 +8,6 @@ use App\Models\Category;
 
 class ShopController extends Controller
 {
-    /**
-     * Display all products.
-     */
     public function index()
     {
         $products = Product::where('status', 1)
@@ -20,20 +17,14 @@ class ShopController extends Controller
 
         $categories = Category::all();
 
-        return view('shop.index', compact('products', 'categories'));
+        return view('customer.shop.index', compact('products', 'categories'));
     }
 
-    /**
-     * Display a single product.
-     */
     public function show(Product $product)
     {
-        return view('shop.show', compact('product'));
+        return view('customer.shop.show', compact('product'));
     }
 
-    /**
-     * Display products by category.
-     */
     public function category(Category $category)
     {
         $products = Product::where('category_id', $category->id)
@@ -43,6 +34,10 @@ class ShopController extends Controller
 
         $categories = Category::all();
 
-        return view('shop.category', compact('products', 'category', 'categories'));
+        return view('customer.shop.category', compact(
+            'products',
+            'category',
+            'categories'
+        ));
     }
 }

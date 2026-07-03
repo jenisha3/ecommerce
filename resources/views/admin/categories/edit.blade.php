@@ -14,7 +14,7 @@
     </ul>
 @endif
 
-<form action="{{ route('categories.update', $category->id) }}" method="POST">
+<form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
     @csrf
     @method('PUT')
 
@@ -34,7 +34,7 @@
 
 <br>
 
-<a href="{{ route('categories.index') }}">
+<a href="{{ route('admin.categories.index') }}">
     Back to Categories
 </a>
 
