@@ -7,10 +7,10 @@
 
 <h1>Shop</h1>
 
-<p>Name: {{ auth()->user()->name }}</p>
-<p>Email: {{ auth()->user()->email }}</p>
+<p>Name: {{ auth()?->user()->name ?? "N/A" }}</p>
+<p>Email: {{ auth()?->user()->email ?? "N/A"}}</p>
 <p>Roles:
-    {{ auth()->user()->getRoleNames()->implode(', ') }}
+    {{ auth()?->user() ? auth()->user()->getRoleNames()->implode(', ') : "N/A" }}
 </p>
 
 <a href="{{ route('dashboard') }}">Customer Dashboard</a>
