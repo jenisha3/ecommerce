@@ -10,17 +10,25 @@ use Illuminate\Support\Str;
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of categories.
+     * Display categories.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::latest()->get();
+        $categories = Category::query()
+
+            ->when($request->search, function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })
+
+            ->latest()
+
+            ->paginate(10);
 
         return view('admin.categories.index', compact('categories'));
     }
 
     /**
-     * Show the form for creating a new category.
+     * Show create form.
      */
     public function create()
     {
@@ -28,7 +36,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Store a newly created category.
+     * Store category.
      */
     public function store(Request $request)
     {
@@ -41,15 +49,16 @@ class CategoryController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
+            'status' => $request->has('status'),
         ]);
 
         return redirect()
-            ->route('categories.index')
-            ->with('success', 'Category added successfully.');
+            ->route('admin.categories.index')
+            ->with('success', 'Category created successfully.');
     }
 
     /**
-     * Display the specified category.
+     * Show category.
      */
     public function show(Category $category)
     {
@@ -57,7 +66,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Show the form for editing the specified category.
+     * Show edit form.
      */
     public function edit(Category $category)
     {
@@ -65,7 +74,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Update the specified category.
+     * Update category.
      */
     public function update(Request $request, Category $category)
     {
@@ -78,22 +87,23 @@ class CategoryController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
+            'status' => $request->has('status'),
         ]);
 
         return redirect()
-            ->route('categories.index')
+            ->route('admin.categories.index')
             ->with('success', 'Category updated successfully.');
     }
 
     /**
-     * Remove the specified category.
+     * Delete category.
      */
     public function destroy(Category $category)
     {
         $category->delete();
 
         return redirect()
-            ->route('categories.index')
+            ->route('admin.categories.index')
             ->with('success', 'Category deleted successfully.');
     }
 }

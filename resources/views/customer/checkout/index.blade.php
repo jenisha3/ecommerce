@@ -2,123 +2,219 @@
 <html>
 <head>
     <title>Checkout</title>
+    @vite('resources/css/app.css')
 </head>
-<body>
 
-<h1>Checkout</h1>
+<body class="bg-gray-100">
 
-@if ($errors->any())
-    <ul style="color:red;">
-        @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-@endif
+<div class="max-w-6xl mx-auto py-10 px-5">
 
-<form action="{{ route('checkout.store') }}" method="POST">
+    <h1 class="text-3xl font-bold text-purple-700 mb-8">
+        Checkout
+    </h1>
 
-    @csrf
 
-    <h2>Shipping Information</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-    <label>Name</label><br>
-    <input
-        type="text"
-        name="customer_name"
-        value="{{ old('customer_name', auth()->user()->name) }}"
-        required>
 
-    <br><br>
+        <!-- Shipping Information -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow p-8">
 
-    <label>Email</label><br>
+            <h2 class="text-xl font-semibold mb-6">
+                Shipping Information
+            </h2>
 
-    <input
-        type="email"
-        name="email"
-        value="{{ old('email', auth()->user()->email) }}"
-        required>
 
-    <br><br>
+            <form action="{{ route('checkout.store') }}" method="POST">
+                @csrf
 
-    <label>Phone Number</label><br>
 
-    <input
-        type="text"
-        name="phone"
-        value="{{ old('phone') }}"
-        required>
+                <div class="mb-5">
+                    <label class="block font-medium mb-2">
+                        Name
+                    </label>
 
-    <br><br>
+                    <input 
+                        type="text"
+                        name="name"
+                        value="{{ Auth::user()->name }}"
+                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+                        required>
+                </div>
 
-    <label>Shipping Address</label><br>
 
-    <textarea
-        name="shipping_address"
-        rows="4"
-        cols="50"
-        required>{{ old('shipping_address') }}</textarea>
+                <div class="mb-5">
+                    <label class="block font-medium mb-2">
+                        Email
+                    </label>
 
-    <br><br>
+                    <input 
+                        type="email"
+                        value="{{ Auth::user()->email }}"
+                        class="w-full border rounded-lg px-4 py-3 bg-gray-100"
+                        readonly>
+                </div>
 
-    <label>Payment Method</label><br>
 
-    <input
-        type="radio"
-        name="payment_method"
-        value="Cash on Delivery"
-        checked>
+                <div class="mb-5">
+                    <label class="block font-medium mb-2">
+                        Phone Number
+                    </label>
 
-    Cash on Delivery
+                    <input 
+                        type="text"
+                        name="phone"
+                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+                        required>
+                </div>
 
-    <hr>
 
-    <h2>Order Summary</h2>
+                <div class="mb-5">
+                    <label class="block font-medium mb-2">
+                        Shipping Address
+                    </label>
 
-    <table border="1" cellpadding="10">
+                    <textarea
+                        name="address"
+                        rows="4"
+                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500"
+                        required></textarea>
+                </div>
 
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Total</th>
-        </tr>
 
-        @foreach($carts as $cart)
+                <div class="mb-6">
 
-        <tr>
+                    <label class="block font-medium mb-2">
+                        Payment Method
+                    </label>
 
-            <td>{{ $cart->product->name }}</td>
 
-            <td>
-                Rs. {{ number_format($cart->product->price,2) }}
-            </td>
+                    <div class="border rounded-lg p-4 bg-gray-50">
 
-            <td>{{ $cart->quantity }}</td>
+                        <label class="flex items-center gap-3">
 
-            <td>
-                Rs. {{ number_format($cart->product->price * $cart->quantity,2) }}
-            </td>
+                            <input 
+                                type="radio"
+                                checked
+                                class="text-purple-600">
 
-        </tr>
+                            <span>
+                                Cash on Delivery
+                            </span>
 
-        @endforeach
+                        </label>
 
-    </table>
+                    </div>
 
-    <br>
+                </div>
 
-    <h2>
-        Grand Total:
-        Rs. {{ number_format($total,2) }}
-    </h2>
 
-    <br>
+                <button
+                    type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold">
 
-    <button type="submit">
-        Place Order
-    </button>
+                    Place Order
 
-</form>
+                </button>
+
+
+            </form>
+
+        </div>
+
+
+
+
+        <!-- Order Summary -->
+
+        <div class="bg-white rounded-xl shadow p-8 h-fit">
+
+
+            <h2 class="text-xl font-semibold mb-6">
+                Order Summary
+            </h2>
+
+
+
+            <div class="space-y-4">
+
+
+                @foreach($cartItems as $item)
+
+                <div class="border-b pb-4">
+
+
+                    <div class="flex justify-between">
+
+                        <span class="font-medium">
+                            {{ $item->product->name }}
+                        </span>
+
+
+                    </div>
+
+
+                    <div class="flex justify-between text-gray-600 mt-2">
+
+                        <span>
+                            Rs. {{ number_format($item->product->price,2) }}
+                        </span>
+
+
+                        <span>
+                            Qty: {{ $item->quantity }}
+                        </span>
+
+
+                    </div>
+
+
+                    <div class="text-right font-semibold mt-2">
+
+                        Rs. {{ number_format($item->product->price * $item->quantity,2) }}
+
+                    </div>
+
+
+                </div>
+
+
+                @endforeach
+
+
+
+            </div>
+
+
+
+            <div class="border-t mt-6 pt-5 flex justify-between text-lg font-bold">
+
+
+                <span>
+                    Grand Total:
+                </span>
+
+
+                <span class="text-purple-700">
+
+                    Rs. {{ number_format($total,2) }}
+
+                </span>
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+</div>
+
 
 </body>
 </html>

@@ -7,22 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = [
-        'category_id',
-        'name',
-        'slug',
-        'description',
-        'price',
-        'discount_price',
-        'stock',
-        'image',
-        'featured',
-        'status',
-    ];
-
+    'category_id',
+    'name',
+    'slug',
+    'description',
+    'price',
+    'discount_price',
+    'stock',
+    'image',
+    'featured',
+    'status',
+];
     public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
+{
+    return $this->belongsTo(Category::class);
+}
     public function carts()
 {
     return $this->hasMany(Cart::class);

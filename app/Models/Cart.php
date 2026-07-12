@@ -21,4 +21,11 @@ class Cart extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getSubtotalAttribute()
+    {
+        $price = $this->product->discount_price ?: $this->product->price;
+
+        return $price * $this->quantity;
+    }
 }

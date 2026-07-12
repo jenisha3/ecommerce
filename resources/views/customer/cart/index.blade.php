@@ -1,78 +1,93 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Cart</title>
-</head>
-<body>
+@extends('layouts.shop')
 
-<h1>My Cart</h1>
+@section('title', 'Shopping Cart')
 
-<a href="{{ route('shop') }}">Continue Shopping</a>
+@section('content')
 
-<hr>
+<h1 class="text-3xl font-bold mb-8">
+    Shopping Cart
+</h1>
 
-{{-- Success Message --}}
 @if(session('success'))
-    <p style="color:green;">
-        {{ session('success') }}
-    </p>
+
+<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+    {{ session('success') }}
+</div>
+
 @endif
 
-{{-- Error Message --}}
-@if(session('error'))
-    <p style="color:red;">
-        {{ session('error') }}
-    </p>
-@endif
+@if($cartItems->count())
 
-@if($carts->count())
+<div class="bg-white rounded-xl shadow overflow-hidden">
 
-<table border="1" cellpadding="10" cellspacing="0">
+<table class="w-full">
+
+    <thead class="bg-gray-100">
 
     <tr>
-        <th>Product</th>
-        <th>Image</th>
-        <th>Price</th>
-        <th>Available Stock</th>
-        <th>Quantity</th>
-        <th>Total</th>
-        <th>Action</th>
+
+        <th class="p-4 text-left">Image</th>
+
+        <th class="p-4 text-left">Product</th>
+
+        <th class="p-4">Price</th>
+
+        <th class="p-4">Quantity</th>
+
+        <th class="p-4">Subtotal</th>
+
+        <th class="p-4">Action</th>
+
     </tr>
 
-    @php
-        $grandTotal = 0;
-    @endphp
+    </thead>
 
-    @foreach($carts as $cart)
+    <tbody>
 
-    @php
-        $total = $cart->product->price * $cart->quantity;
-        $grandTotal += $total;
-    @endphp
+    @foreach($cartItems as $item)
 
-    <tr>
+    <tr class="border-t">
 
-        <td>{{ $cart->product->name }}</td>
+        <td class="p-4">
 
-        <td>
-            @if($cart->product->image)
-                <img src="{{ asset('storage/'.$cart->product->image) }}" width="80">
-            @else
-                No Image
+            @if($item->product->image)
+
+                <img
+                    src="{{ asset('products/'.$item->product->image) }}"
+                    class="w-20 h-20 object-cover rounded">
+
             @endif
+
         </td>
 
-        <td>
-            Rs. {{ number_format($cart->product->price,2) }}
+        <td class="p-4">
+
+            <div class="font-semibold">
+
+                {{ $item->product->name }}
+
+            </div>
+
+            <div class="text-gray-500 text-sm">
+
+                {{ $item->product->category->name }}
+
+            </div>
+
         </td>
 
-        <td>
-            {{ $cart->product->stock }}
+        <td class="text-center">
+
+            Rs.
+            {{ number_format($item->product->discount_price ?: $item->product->price,2) }}
+
         </td>
 
-        <td>
+        <td class="text-center">
 
-            <form action="{{ route('cart.update',$cart->id) }}" method="POST">
+            <form
+                action="{{ route('cart.update',$item->id) }}"
+                method="POST">
 
                 @csrf
                 @method('PATCH')
@@ -80,34 +95,43 @@
                 <input
                     type="number"
                     name="quantity"
-                    value="{{ $cart->quantity }}"
                     min="1"
-                    max="{{ $cart->product->stock }}"
-                >
+                    value="{{ $item->quantity }}"
+                    class="border rounded w-20 text-center">
 
-                <button type="submit">
+                <button
+                    class="bg-blue-600 text-white px-3 py-1 rounded ml-2">
+
                     Update
+
                 </button>
 
             </form>
 
         </td>
 
-        <td>
-            Rs. {{ number_format($total,2) }}
+        <td class="text-center">
+
+            Rs.
+            {{ number_format($item->subtotal,2) }}
+
         </td>
 
-        <td>
+        <td class="text-center">
 
-            <form action="{{ route('cart.destroy',$cart->id) }}" method="POST">
+            <form
+                action="{{ route('cart.destroy',$item->id) }}"
+                method="POST">
 
                 @csrf
                 @method('DELETE')
 
                 <button
-                    type="submit"
-                    onclick="return confirm('Remove this product from cart?')">
+                    onclick="return confirm('Remove item?')"
+                    class="bg-red-600 text-white px-4 py-2 rounded">
+
                     Remove
+
                 </button>
 
             </form>
@@ -118,32 +142,66 @@
 
     @endforeach
 
+    </tbody>
+
 </table>
 
-<br>
+</div>
 
-<h3>
-    Grand Total :
-    Rs. {{ number_format($grandTotal,2) }}
-</h3>
+<div class="mt-8 flex justify-end">
 
-<br>
+<div class="bg-white shadow rounded-xl p-6 w-80">
 
-<a href="{{ route('checkout.index') }}">
-    <button>
+    <h2 class="text-2xl font-bold mb-4">
+
+        Cart Total
+
+    </h2>
+
+    <div class="flex justify-between mb-6">
+
+        <span>Total</span>
+
+        <span class="font-bold">
+
+            Rs. {{ number_format($total,2) }}
+
+        </span>
+
+    </div>
+
+    <a
+        href="{{ route('checkout.index') }}"
+        class="block text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg">
+
         Proceed to Checkout
-    </button>
-</a>
+
+    </a>
+
+</div>
+
+</div>
 
 @else
 
-<h3>Your cart is empty.</h3>
+<div class="bg-white rounded-xl shadow p-10 text-center">
 
-<a href="{{ route('shop') }}">
-    Continue Shopping
-</a>
+    <h2 class="text-2xl font-bold mb-3">
+
+        Your cart is empty
+
+    </h2>
+
+    <a
+        href="{{ route('shop.products') }}"
+        class="inline-block mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg">
+
+        Continue Shopping
+
+    </a>
+
+</div>
 
 @endif
 
-</body>
-</html>
+@endsection

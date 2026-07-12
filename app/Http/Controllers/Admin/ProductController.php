@@ -10,16 +10,29 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    /**
-     * Display all products.
-     */
-    public function index()
-    {
-        $products = Product::with('category')->latest()->get();
+    
+   public function index(Request $request)
+{
+    $query = Product::with('category');
 
-        return view('admin.products.index', compact('products'));
+    if ($request->filled('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%');
     }
 
+    if ($request->filled('category')) {
+        $query->where('category_id', $request->category);
+    }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $products = $query->latest()->paginate(10);
+
+    $categories = Category::all();
+
+    return view('admin.products.index', compact('products', 'categories'));
+}
     /**
      * Show create product form.
      */

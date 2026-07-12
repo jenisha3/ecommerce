@@ -1,116 +1,77 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Dashboard</title>
-</head>
-<body>
+@extends('layouts.admin')
 
-<h1>Admin Dashboard</h1>
+@section('title', 'Dashboard')
 
-<p>
-    Welcome,
-    <strong>{{ auth()->user()->name }}</strong>
-</p>
+@section('content')
 
-<hr>
+<h2 class="text-3xl font-bold mb-8">
+    Dashboard Statistics
+</h2>
 
-<ul>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-    <li>
-        <a href="{{ route('admin.dashboard') }}"> Dashboard </a>    
-    </li>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Total Categories</h3>
+        <p class="text-3xl font-bold mt-2">{{ $totalCategories }}</p>
+    </div>
 
-    <li>
-        <a href="{{ route('admin.categories.index') }}"> Categories</a>
-    </li>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Total Products</h3>
+        <p class="text-3xl font-bold mt-2">{{ $totalProducts }}</p>
+    </div>
 
-    <li>
-        <a href="{{ route('admin.products.index') }}"> Products </a>
-    </li>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Total Customers</h3>
+        <p class="text-3xl font-bold mt-2">{{ $totalCustomers }}</p>
+    </div>
 
-    <li>
-        <a href="{{ route('admin.orders.index') }}"> Orders</a>
-    </li>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Total Orders</h3>
+        <p class="text-3xl font-bold mt-2">{{ $totalOrders }}</p>
+    </div>
 
-    <li>
-        <a href="{{ route('admin.customers.index') }}">Customers  </a>
-    </li>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Pending Orders</h3>
+        <p class="text-3xl font-bold mt-2 text-yellow-600">
+            {{ $pendingOrders }}
+        </p>
+    </div>
 
-</ul>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Processing Orders</h3>
+        <p class="text-3xl font-bold mt-2 text-blue-600">
+            {{ $processingOrders }}
+        </p>
+    </div>
 
-<hr>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Delivered Orders</h3>
+        <p class="text-3xl font-bold mt-2 text-green-600">
+            {{ $deliveredOrders }}
+        </p>
+    </div>
 
-<h2>Dashboard Statistics</h2>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Cancelled Orders</h3>
+        <p class="text-3xl font-bold mt-2 text-red-600">
+            {{ $cancelledOrders }}
+        </p>
+    </div>
 
-<table border="1" cellpadding="10">
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Revenue</h3>
+        <p class="text-2xl font-bold mt-2">
+            Rs. {{ number_format($totalRevenue,2) }}
+        </p>
+    </div>
 
-<tr>
-    <td>Total Categories</td>
-    <td>{{ $totalCategories }}</td>
-</tr>
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-gray-500">Low Stock Products</h3>
+        <p class="text-3xl font-bold mt-2 text-orange-600">
+            {{ $lowStockProducts }}
+        </p>
+    </div>
 
-<tr>
-    <td>Total Products</td>
-    <td>{{ $totalProducts }}</td>
-</tr>
+</div>
 
-<tr>
-    <td>Total Customers</td>
-    <td>{{ $totalCustomers }}</td>
-</tr>
-
-<tr>
-    <td>Total Orders</td>
-    <td>{{ $totalOrders }}</td>
-</tr>
-
-<tr>
-    <td>Pending Orders</td>
-    <td>{{ $pendingOrders }}</td>
-</tr>
-
-<tr>
-    <td>Processing Orders</td>
-    <td>{{ $processingOrders }}</td>
-</tr>
-
-<tr>
-    <td>Shipped Orders</td>
-    <td>{{ $shippedOrders }}</td>
-</tr>
-
-<tr>
-    <td>Delivered Orders</td>
-    <td>{{ $deliveredOrders }}</td>
-</tr>
-
-<tr>
-    <td>Cancelled Orders</td>
-    <td>{{ $cancelledOrders }}</td>
-</tr>
-
-<tr>
-    <td>Total Revenue</td>
-    <td>Rs. {{ number_format($totalRevenue,2) }}</td>
-</tr>
-
-<tr>
-    <td>Low Stock Products</td>
-    <td>{{ $lowStockProducts }}</td>
-</tr>
-
-</table>
-
-<hr>
-
-<form action="{{ route('logout') }}" method="POST">
-    @csrf
-
-    <button type="submit">
-        Logout
-    </button>
-
-</form>
-
-</body>
-</html>
+@endsection

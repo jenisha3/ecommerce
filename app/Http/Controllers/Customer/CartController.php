@@ -11,14 +11,20 @@ use Illuminate\Support\Facades\Auth;
 class CartController extends Controller
 {
     // Display Cart
-    public function index()
-    {
-        $carts = Cart::with('product')
-            ->where('user_id', Auth::id())
-            ->get();
+   public function index()
+{
+    $cartItems = Cart::with('product')
+        ->where('user_id', Auth::id())
+        ->get();
 
-        return view('customer.cart.index', compact('carts'));
+    $total = 0;
+
+    foreach ($cartItems as $item) {
+        $total += $item->product->price * $item->quantity;
     }
+
+    return view('customer.cart.index', compact('cartItems', 'total'));
+}
 
     // Add Product to Cart
     public function store(Product $product)
@@ -40,7 +46,7 @@ class CartController extends Controller
 
         $cart->increment('quantity');
 
-    } else {
+        } else {
 
         if ($product->stock < 1) {
 
@@ -57,12 +63,9 @@ class CartController extends Controller
         ]);
     }
 
-    return redirect()->back()->with(
-        'success',
-        'Product added to cart successfully.'
-    );
-    }
-
+    return redirect()->route('cart.index')
+        ->with('success', 'Product added to cart successfully.');
+}
     // Update Quantity
     public function update(Request $request, Cart $cart)
     {

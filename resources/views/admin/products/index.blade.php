@@ -4,115 +4,285 @@
 
 @section('content')
 
-<h2>Product List</h2>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+    <div>
+        <h2 class="text-3xl font-bold text-gray-800">Products</h2>
+        <p class="text-gray-500 mt-1">
+            Manage all products from here.
+        </p>
+    </div>
+
+    <a href="{{ route('admin.products.create') }}"
+       class="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow">
+        + Add Product
+    </a>
+</div>
 
 @if(session('success'))
-    <p style="color:green;">{{ session('success') }}</p>
+<div class="mb-5 rounded-lg bg-green-100 border border-green-400 text-green-700 px-4 py-3">
+    {{ session('success') }}
+</div>
 @endif
 
-<a href="{{ route('admin.products.create') }}">Add Product</a>
+<form action="{{ route('admin.products.index') }}"
+      method="GET"
+      class="bg-white rounded-lg shadow p-5 mb-6">
 
-<br><br>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
-<table border="1" cellpadding="10" cellspacing="0">
+        <div>
+            <label class="block text-sm font-semibold mb-2">
+                Search
+            </label>
 
-    <tr>
-        <th>ID</th>
-        <th>Image</th>
-        <th>Category</th>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Discount Price</th>
-        <th>Stock</th>
-        <th>Featured</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Search product..."
+                class="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-blue-200">
+        </div>
 
-    @forelse($products as $product)
+        <div>
+            <label class="block text-sm font-semibold mb-2">
+                Category
+            </label>
 
-    <tr>
+            <select
+                name="category"
+                class="w-full border rounded-lg px-3 py-2">
 
-        <td>{{ $product->id }}</td>
+                <option value="">All Categories</option>
 
-        <td>
-            @if($product->image)
-                <img src="{{ asset('products/'.$product->image) }}"
-                     width="70">
-            @endif
-        </td>
+                @foreach($categories as $category)
 
-        <td>{{ $product->category->name }}</td>
+                <option
+                    value="{{ $category->id }}"
+                    {{ request('category') == $category->id ? 'selected' : '' }}>
 
-        <td>{{ $product->name }}</td>
+                    {{ $category->name }}
 
-        <td>{{ $product->price }}</td>
+                </option>
 
-        <td>{{ $product->discount_price }}</td>
+                @endforeach
 
-        <td>
-    {{ $product->stock }}
+            </select>
+        </div>
 
-    <br>
+        
+
+
+        <div class="flex items-end gap-2">
+
+            <button
+                type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
+
+                Search
+
+            </button>
+
+            <a
+                href="{{ route('admin.products.index') }}"
+                class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
+
+                Reset
+
+            </a>
+
+        </div>
+
+    </div>
+
+</form>
+
+<div class="bg-white rounded-lg shadow overflow-hidden">
+
+<table class="min-w-full">
+
+<thead class="bg-gray-100">
+
+<tr>
+
+<th class="px-4 py-3 text-left">Image</th>
+<th class="px-4 py-3 text-left">Name</th>
+<th class="px-4 py-3 text-left">Category</th>
+<th class="px-4 py-3 text-left">Price</th>
+<th class="px-4 py-3 text-left">Discount</th>
+<th class="px-4 py-3 text-left">Stock</th>
+<th class="px-4 py-3 text-left">Featured</th>
+<th class="px-4 py-3 text-left">Status</th>
+<th class="px-4 py-3 text-center">Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody class="divide-y">
+
+@forelse($products as $product)
+
+<tr class="hover:bg-gray-50">
+
+<td class="px-4 py-3">
+
+@if($product->image)
+
+<img
+src="{{ asset('products/'.$product->image) }}"
+class="w-16 h-16 rounded object-cover">
+
+@else
+
+<div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs">
+No Image
+</div>
+
+@endif
+
+</td>
+
+<td class="px-4 py-3 font-semibold">
+{{ $product->name }}
+</td>
+
+<td class="px-4 py-3">
+{{ $product->category->name }}
+</td>
+
+<td class="px-4 py-3">
+Rs. {{ number_format($product->price,2) }}
+</td>
+
+<td class="px-4 py-3">
+
+@if($product->discount_price)
+
+Rs. {{ number_format($product->discount_price,2) }}
+
+@else
+
+-
+
+@endif
+
+</td>
+<td class="px-4 py-3">
 
     @if($product->stock == 0)
-        <span style="color:red;">
-            Out of Stock
+
+        <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
+            Out of Stock ({{ $product->stock }})
         </span>
 
     @elseif($product->stock <= 5)
-        <span style="color:orange;">
-            Low Stock
+
+        <span class="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
+            Low Stock ({{ $product->stock }})
         </span>
 
     @else
-        <span style="color:green;">
-            In Stock
+
+        <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+            In Stock ({{ $product->stock }})
         </span>
+
     @endif
 
 </td>
 
-        <td>{{ $product->featured ? 'Yes' : 'No' }}</td>
+<td class="px-4 py-3">
 
-        <td>{{ $product->status ? 'Active' : 'Inactive' }}</td>
+    @if($product->featured)
 
-        <td>
+        <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+            Yes
+        </span>
 
-            <a href="{{ route('admin.products.show', $product->id) }}">View</a> |
+    @else
 
-            <a href="{{ route('admin.products.edit', $product->id) }}">Edit</a> |
+        <span class="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
+            No
+        </span>
 
-            <form action="{{ route('admin.products.destroy', $product->id) }}"
-                  method="POST"
-                  style="display:inline;">
+    @endif
 
-                @csrf
-                @method('DELETE')
+</td>
 
-                <button type="submit"
-                onclick="return confirm('Delete this product?')">
-                    Delete
-                </button>
+<td class="px-4 py-3">
 
-            </form>
+    @if($product->status)
 
-        </td>
+        <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+            Active
+        </span>
 
-    </tr>
+    @else
 
-    @empty
+        <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+            Inactive
+        </span>
 
-    <tr>
+    @endif
 
-        <td colspan="10">
-            No Products Found.
-        </td>
+</td>
 
-    </tr>
+<td class="px-4 py-3">
 
-    @endforelse
+    <div class="flex gap-2 justify-center">
+
+        <a href="{{ route('admin.products.show',$product->id) }}"
+           class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm">
+            View
+        </a>
+
+        <a href="{{ route('admin.products.edit',$product->id) }}"
+           class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm">
+            Edit
+        </a>
+
+        <form action="{{ route('admin.products.destroy',$product->id) }}"
+              method="POST"
+              onsubmit="return confirm('Delete this product?')">
+
+            @csrf
+            @method('DELETE')
+
+            <button
+                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm">
+                Delete
+            </button>
+
+        </form>
+
+    </div>
+
+</td>
+
+</tr>
+
+@empty
+
+<tr>
+
+    <td colspan="9" class="text-center py-8 text-gray-500">
+        No Products Found
+    </td>
+
+</tr>
+
+@endforelse
+
+</tbody>
 
 </table>
+
+</div>
+
+<div class="mt-6">
+
+    {{ $products->withQueryString()->links() }}
+
+</div>
 
 @endsection

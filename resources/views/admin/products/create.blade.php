@@ -1,138 +1,242 @@
 @extends('layouts.admin')
 
-@section('title','Add Product')
+@section('title', 'Add Product')
 
 @section('content')
 
-<h2>Add Product</h2>
+<div class="max-w-5xl mx-auto">
 
-@if ($errors->any())
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800">
+                Add Product
+            </h2>
 
-<ul>
+            <p class="text-gray-500 mt-1">
+                Create a new product for your store.
+            </p>
+        </div>
 
-@foreach ($errors->all() as $error)
+        <a href="{{ route('admin.products.index') }}"
+           class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg">
+            Back
+        </a>
+    </div>
 
-<li style="color:red">{{ $error }}</li>
+    @if ($errors->any())
 
-@endforeach
+        <div class="bg-red-100 border border-red-400 text-red-700 rounded-lg p-4 mb-6">
 
-</ul>
+            <ul class="list-disc ml-5">
 
-@endif
+                @foreach ($errors->all() as $error)
 
-<form action="{{ route('admin.products.store') }}"
-      method="POST"
-      enctype="multipart/form-data">
+                    <li>{{ $error }}</li>
 
-@csrf
+                @endforeach
 
-<label>Category</label>
+            </ul>
 
-<br>
+        </div>
 
-<select name="category_id">
+    @endif
 
-<option value="">Select Category</option>
+    <div class="bg-white rounded-xl shadow-lg p-8">
 
-@foreach($categories as $category)
+        <form action="{{ route('admin.products.store') }}"
+              method="POST"
+              enctype="multipart/form-data">
 
-<option value="{{ $category->id }}">
+            @csrf
 
-{{ $category->name }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-</option>
+                <!-- Category -->
 
-@endforeach
+                <div>
 
-</select>
+                    <label class="block font-semibold mb-2">
+                        Category
+                    </label>
 
-<br><br>
+                    <select
+                        name="category_id"
+                        class="w-full border rounded-lg px-4 py-2">
 
-<label>Product Name</label>
+                        <option value="">
+                            Select Category
+                        </option>
 
-<br>
+                        @foreach($categories as $category)
 
-<input type="text"
-       name="name"
-       value="{{ old('name') }}">
+                            <option
+                                value="{{ $category->id }}"
+                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
 
-<br><br>
+                                {{ $category->name }}
 
-<label>Description</label>
+                            </option>
 
-<br>
+                        @endforeach
 
-<textarea name="description"></textarea>
+                    </select>
 
-<br><br>
+                </div>
 
-<label>Price</label>
+                <!-- Product Name -->
 
-<br>
+                <div>
 
-<input type="number"
-       step="0.01"
-       name="price">
+                    <label class="block font-semibold mb-2">
+                        Product Name
+                    </label>
 
-<br><br>
+                    <input
+                        type="text"
+                        name="name"
+                        value="{{ old('name') }}"
+                        class="w-full border rounded-lg px-4 py-2">
 
-<label>Discount Price</label>
+                </div>
 
-<br>
+                <!-- Price -->
 
-<input type="number"
-       step="0.01"
-       name="discount_price">
+                <div>
 
-<br><br>
+                    <label class="block font-semibold mb-2">
+                        Price
+                    </label>
 
-<label>Stock</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="price"
+                        value="{{ old('price') }}"
+                        class="w-full border rounded-lg px-4 py-2">
 
-<br>
+                </div>
 
-<input type="number"
-       name="stock">
+                <!-- Discount Price -->
 
-<br><br>
+                <div>
 
-<label>Image</label>
+                    <label class="block font-semibold mb-2">
+                        Discount Price
+                    </label>
 
-<br>
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="discount_price"
+                        value="{{ old('discount_price') }}"
+                        class="w-full border rounded-lg px-4 py-2">
 
-<input type="file"
-       name="image">
+                </div>
 
-<br><br>
+                <!-- Stock -->
 
-<label>
+                <div>
 
-<input type="checkbox"
-       name="featured">
+                    <label class="block font-semibold mb-2">
+                        Stock
+                    </label>
 
-Featured
+                    <input
+                        type="number"
+                        name="stock"
+                        value="{{ old('stock') }}"
+                        class="w-full border rounded-lg px-4 py-2">
 
-</label>
+                </div>
 
-<br><br>
+                <!-- Product Image -->
 
-<label>
+                <div>
 
-<input type="checkbox"
-       name="status"
-       checked>
+                    <label class="block font-semibold mb-2">
+                        Product Image
+                    </label>
 
-Active
+                    <input
+                        type="file"
+                        name="image"
+                        class="w-full border rounded-lg px-4 py-2">
 
-</label>
+                </div>
 
-<br><br>
+            </div>
 
-<button type="submit">
+            <!-- Description -->
 
-Save Product
+            <div class="mt-6">
 
-</button>
+                <label class="block font-semibold mb-2">
+                    Description
+                </label>
 
-</form>
+                <textarea
+                    name="description"
+                    rows="5"
+                    class="w-full border rounded-lg px-4 py-2">{{ old('description') }}</textarea>
+
+            </div>
+
+            <!-- Checkboxes -->
+
+            <div class="mt-6 flex gap-8">
+
+                <label class="flex items-center gap-2">
+
+                    <input
+                        type="checkbox"
+                        name="featured"
+                        value="1"
+                        {{ old('featured') ? 'checked' : '' }}>
+
+                    Featured Product
+
+                </label>
+
+                <label class="flex items-center gap-2">
+
+                    <input
+                        type="checkbox"
+                        name="status"
+                        value="1"
+                        {{ old('status',1) ? 'checked' : '' }}>
+
+                    Active
+
+                </label>
+
+            </div>
+
+            <!-- Buttons -->
+
+            <div class="mt-8 flex gap-4">
+
+                <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+
+                    Save Product
+
+                </button>
+
+                <a
+                    href="{{ route('admin.products.index') }}"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 @endsection

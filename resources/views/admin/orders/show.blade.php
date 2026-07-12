@@ -1,101 +1,237 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Order Details</title>
-</head>
-<body>
+@extends('layouts.admin')
 
-<h1>Order Details</h1>
+@section('title', 'Order Details')
 
-@if(session('success'))
-    <p style="color:green;">
-        {{ session('success') }}
-    </p>
-@endif
+@section('content')
 
-<p><strong>Order ID:</strong> {{ $order->id }}</p>
+<div class="max-w-6xl mx-auto">
 
-<p><strong>Customer:</strong> {{ $order->customer_name }}</p>
+    <div class="flex justify-between items-center mb-6">
 
-<p><strong>Email:</strong> {{ $order->email }}</p>
+        <div>
 
-<p><strong>Phone:</strong> {{ $order->phone }}</p>
+            <h2 class="text-3xl font-bold text-gray-800">
+                Order #{{ $order->id }}
+            </h2>
 
-<p><strong>Shipping Address:</strong> {{ $order->shipping_address }}</p>
+            <p class="text-gray-500 mt-1">
+                Customer Order Details
+            </p>
 
-<p><strong>Payment Method:</strong> {{ $order->payment_method }}</p>
+        </div>
 
-<p><strong>Total:</strong> Rs. {{ number_format($order->total_amount,2) }}</p>
+        <a href="{{ route('admin.orders.index') }}"
+           class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg">
 
-<p><strong>Status:</strong> {{ $order->status }}</p>
+            Back
 
-<hr>
+        </a>
 
-<h2>Products</h2>
+    </div>
 
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Product</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Subtotal</th>
-    </tr>
+    @if(session('success'))
 
-    @foreach($order->items as $item)
-    <tr>
-        <td>{{ $item->product->name }}</td>
-        <td>Rs. {{ number_format($item->price,2) }}</td>
-        <td>{{ $item->quantity }}</td>
-        <td>Rs. {{ number_format($item->price * $item->quantity,2) }}</td>
-    </tr>
-    @endforeach
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-5">
 
-</table>
+            {{ session('success') }}
 
-<br>
+        </div>
 
-<h2>Update Order Status</h2>
+    @endif
 
-<form action="{{ route('admin.orders.update', $order->id) }}" method="POST">
+    <!-- Customer Information -->
 
-    @csrf
-    @method('PUT')
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
 
-    <select name="status">
+        <h3 class="text-xl font-semibold mb-5">
+            Customer Information
+        </h3>
 
-        <option value="Pending" {{ $order->status=='Pending'?'selected':'' }}>
-            Pending
-        </option>
+        <div class="grid grid-cols-2 gap-6">
 
-        <option value="Processing" {{ $order->status=='Processing'?'selected':'' }}>
-            Processing
-        </option>
+            <div>
 
-        <option value="Shipped" {{ $order->status=='Shipped'?'selected':'' }}>
-            Shipped
-        </option>
+                <p class="text-gray-500">Customer Name</p>
 
-        <option value="Delivered" {{ $order->status=='Delivered'?'selected':'' }}>
-            Delivered
-        </option>
+                <p class="font-semibold">
+                    {{ $order->user->name }}
+                </p>
 
-        <option value="Cancelled" {{ $order->status=='Cancelled'?'selected':'' }}>
-            Cancelled
-        </option>
+            </div>
 
-    </select>
+            <div>
 
-    <button type="submit">
-        Update Status
-    </button>
+                <p class="text-gray-500">Email</p>
 
-</form>
+                <p class="font-semibold">
+                    {{ $order->user->email }}
+                </p>
 
-<br>
+            </div>
 
-<a href="{{ route('admin.orders.index') }}">
-    Back to Orders
-</a>
+            <div>
 
-</body>
-</html>
+                <p class="text-gray-500">Order Date</p>
+
+                <p class="font-semibold">
+                    {{ $order->created_at->format('d M Y h:i A') }}
+                </p>
+
+            </div>
+
+            <div>
+
+                <p class="text-gray-500">Total Amount</p>
+
+                <p class="font-bold text-blue-600 text-lg">
+                    Rs. {{ number_format($order->total_amount,2) }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Order Status -->
+
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+
+        <h3 class="text-xl font-semibold mb-5">
+            Update Order Status
+        </h3>
+
+        <form action="{{ route('admin.orders.update',$order->id) }}"
+              method="POST">
+
+            @csrf
+            @method('PUT')
+
+            <div class="flex gap-4 items-center">
+
+                <select
+                    name="status"
+                    class="border rounded-lg px-4 py-2 w-60">
+
+                    <option value="Pending"
+                        {{ $order->status=='Pending' ? 'selected' : '' }}>
+                        Pending
+                    </option>
+
+                    <option value="Processing"
+                        {{ $order->status=='Processing' ? 'selected' : '' }}>
+                        Processing
+                    </option>
+
+                    <option value="Shipped"
+                        {{ $order->status=='Shipped' ? 'selected' : '' }}>
+                        Shipped
+                    </option>
+
+                    <option value="Delivered"
+                        {{ $order->status=='Delivered' ? 'selected' : '' }}>
+                        Delivered
+                    </option>
+
+                    <option value="Cancelled"
+                        {{ $order->status=='Cancelled' ? 'selected' : '' }}>
+                        Cancelled
+                    </option>
+
+                </select>
+
+                <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+
+                    Update Status
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- Order Items -->
+
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+
+        <div class="px-6 py-4 border-b">
+
+            <h3 class="text-xl font-semibold">
+                Ordered Products
+            </h3>
+
+        </div>
+
+        <table class="w-full">
+
+            <thead class="bg-slate-900 text-white">
+
+            <tr>
+
+                <th class="text-left px-6 py-4">
+                    Product
+                </th>
+
+                <th class="text-left px-6 py-4">
+                    Price
+                </th>
+
+                <th class="text-left px-6 py-4">
+                    Quantity
+                </th>
+
+                <th class="text-left px-6 py-4">
+                    Subtotal
+                </th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            @foreach($order->items as $item)
+
+                <tr class="border-b hover:bg-gray-50">
+
+                    <td class="px-6 py-4">
+
+                        {{ $item->product->name }}
+
+                    </td>
+
+                    <td class="px-6 py-4">
+
+                        Rs. {{ number_format($item->price,2) }}
+
+                    </td>
+
+                    <td class="px-6 py-4">
+
+                        {{ $item->quantity }}
+
+                    </td>
+
+                    <td class="px-6 py-4 font-semibold">
+
+                        Rs. {{ number_format($item->price * $item->quantity,2) }}
+
+                    </td>
+
+                </tr>
+
+            @endforeach
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+@endsection

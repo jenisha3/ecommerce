@@ -4,38 +4,130 @@
 
 @section('content')
 
-<h2>Edit Category</h2>
+<div class="max-w-4xl mx-auto">
 
-@if ($errors->any())
-    <ul>
-        @foreach ($errors->all() as $error)
-            <li style="color:red;">{{ $error }}</li>
-        @endforeach
-    </ul>
-@endif
+    <div class="flex justify-between items-center mb-6">
 
-<form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
-    @csrf
-    @method('PUT')
+        <div>
 
-    <label>Category Name</label>
-    <br>
-    <input type="text" name="name" value="{{ old('name', $category->name) }}">
-    <br><br>
+            <h2 class="text-3xl font-bold text-gray-800">
+                Edit Category
+            </h2>
 
-    <label>Description</label>
-    <br>
-    <textarea name="description" rows="5" cols="40">{{ old('description', $category->description) }}</textarea>
-    <br><br>
+            <p class="text-gray-500 mt-1">
+                Update category information.
+            </p>
 
-    <button type="submit">Update Category</button>
+        </div>
 
-</form>
+        <a href="{{ route('admin.categories.index') }}"
+           class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg">
+            Back
+        </a>
 
-<br>
+    </div>
 
-<a href="{{ route('admin.categories.index') }}">
-    Back to Categories
-</a>
+    @if($errors->any())
+
+        <div class="bg-red-100 border border-red-400 text-red-700 rounded-lg p-4 mb-6">
+
+            <ul class="list-disc ml-5">
+
+                @foreach($errors->all() as $error)
+
+                    <li>{{ $error }}</li>
+
+                @endforeach
+
+            </ul>
+
+        </div>
+
+    @endif
+
+    <div class="bg-white shadow-lg rounded-xl p-8">
+
+        <form action="{{ route('admin.categories.update',$category->id) }}"
+              method="POST">
+
+            @csrf
+            @method('PUT')
+
+            <!-- Category Name -->
+
+            <div class="mb-6">
+
+                <label class="block font-semibold mb-2">
+                    Category Name
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="{{ old('name',$category->name) }}"
+                    class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500">
+
+            </div>
+
+            <!-- Description -->
+
+            <div class="mb-6">
+
+                <label class="block font-semibold mb-2">
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="5"
+                    class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500">{{ old('description',$category->description) }}</textarea>
+
+            </div>
+
+            <!-- Status -->
+
+            <div class="mb-8">
+
+                <label class="flex items-center gap-3">
+
+                    <input
+                        type="checkbox"
+                        name="status"
+                        value="1"
+                        {{ old('status',$category->status) ? 'checked' : '' }}>
+
+                    <span>Active</span>
+
+                </label>
+
+            </div>
+
+            <!-- Buttons -->
+
+            <div class="flex gap-4">
+
+                <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+
+                    Update Category
+
+                </button>
+
+                <a
+                    href="{{ route('admin.categories.index') }}"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 @endsection
