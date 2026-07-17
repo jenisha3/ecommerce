@@ -59,12 +59,10 @@
 
                 </a>
 
-                <a href="#"
-                   class="block hover:bg-gray-100 px-4 py-3 rounded-lg">
-
-                    Profile
-
-                </a>
+                <a href="{{ route('profile.edit') }}"
+                    class="block hover:bg-gray-100 px-4 py-3 rounded-lg">
+    Edit Profile
+</a>
 
                 <form action="{{ route('logout') }}"
                       method="POST">

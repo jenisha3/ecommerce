@@ -19,6 +19,8 @@ use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Admin\InventoryController;
 
+use App\Http\Controllers\ProfileController;
+
 Route::get('/', [ShopController::class, 'index'])->name('shop');
 
 Route::get('/products', [ShopController::class, 'products'])->name('shop.products');
@@ -111,3 +113,14 @@ Route::middleware(['auth', 'role:Admin'])
     });
     Route::get('/reports', [ReportController::class, 'index'])
     ->name('reports.index');
+
+   
+    Route::middleware('auth')->group(function () {
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+});

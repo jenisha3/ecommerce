@@ -108,6 +108,7 @@
 
                     <input
                         type="number"
+                        min="0"
                         step="0.01"
                         name="price"
                         value="{{ old('price') }}"
@@ -124,6 +125,7 @@
 
                     <input
                         type="number"
+                        min="0"
                         step="0.01"
                         name="discount_price"
                         value="{{ old('discount_price') }}"

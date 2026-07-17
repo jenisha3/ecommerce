@@ -15,10 +15,12 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    'name',
+    'email',
+    'phone',
+    'address',
+    'password',
+];
 
     /**
      * The attributes that should be hidden for serialization.

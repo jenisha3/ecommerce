@@ -52,12 +52,14 @@ class ProductController extends Controller
             'category_id'    => 'required|exists:categories,id',
             'name'           => 'required|string|max:255|unique:products,name',
             'description'    => 'nullable|string',
-            'price'          => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
+            'price'          => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0|lt:price',
             'stock'          => 'required|integer|min:0',
             'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'featured'       => 'nullable',
             'status'         => 'nullable',
+        ], [
+            'discount_price.lt' => 'The discount price must be less than the actual price.',
         ]);
 
         $imageName = null;
@@ -114,10 +116,12 @@ class ProductController extends Controller
             'category_id'    => 'required|exists:categories,id',
             'name'           => 'required|string|max:255|unique:products,name,' . $product->id,
             'description'    => 'nullable|string',
-            'price'          => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
+            'price'          => 'required|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0|lt:price',
             'stock'          => 'required|integer|min:0',
             'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'discount_price.lt' => 'The discount price must be less than the actual price.',
         ]);
 
         $imageName = $product->image;
