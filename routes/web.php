@@ -18,8 +18,11 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Customer\ReviewController;
 
 use App\Http\Controllers\ProfileController;
+
+use App\Http\Controllers\Customer\WishlistController;
 
 Route::get('/', [ShopController::class, 'index'])->name('shop');
 
@@ -115,12 +118,36 @@ Route::middleware(['auth', 'role:Admin'])
     ->name('reports.index');
 
    
-    Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 
     Route::put('/profile', [ProfileController::class, 'update'])
         ->name('profile.update');
+
+});
+
+Route::middleware('auth')->group(function () {
+
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])
+        ->name('reviews.store');
+
+});
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/wishlist',
+        [WishlistController::class,'index'])
+        ->name('wishlist.index');
+
+    Route::post('/wishlist/{product}',
+        [WishlistController::class,'store'])
+        ->name('wishlist.store');
+
+    Route::delete('/wishlist/{wishlist}',
+        [WishlistController::class,'destroy'])
+        ->name('wishlist.destroy');
 
 });

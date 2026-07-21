@@ -29,16 +29,7 @@
 
     </div>
 
-    @if(session('success'))
-
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-5">
-
-            {{ session('success') }}
-
-        </div>
-
-    @endif
-
+    
     <!-- Customer Information -->
 
     <div class="bg-white rounded-xl shadow p-6 mb-6">
@@ -54,7 +45,7 @@
                 <p class="text-gray-500">Customer Name</p>
 
                 <p class="font-semibold">
-                    {{ $order->user->name }}
+                    {{ $order->customer_name }}
                 </p>
 
             </div>
@@ -64,10 +55,33 @@
                 <p class="text-gray-500">Email</p>
 
                 <p class="font-semibold">
-                    {{ $order->user->email }}
+                    {{ $order->email }}
                 </p>
 
             </div>
+            <div>
+
+    <p class="text-gray-500">
+        Phone
+    </p>
+
+    <p class="font-semibold">
+        {{ $order->phone }}
+    </p>
+
+</div>
+
+<div>
+
+    <p class="text-gray-500">
+        Shipping Address
+    </p>
+
+    <p class="font-semibold">
+        {{ $order->shipping_address }}
+    </p>
+
+</div>
 
             <div>
 

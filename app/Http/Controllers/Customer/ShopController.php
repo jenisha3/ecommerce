@@ -93,18 +93,22 @@ class ShopController extends Controller
      * Product Details
      */
     public function show(Product $product)
-    {
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->where('status', 1)
-            ->take(4)
-            ->get();
+{
+    $product->load([
+        'reviews.user'
+    ]);
 
-        return view('shop.show', compact(
-            'product',
-            'relatedProducts'
-        ));
-    }
+    $relatedProducts = Product::where('category_id', $product->category_id)
+        ->where('id', '!=', $product->id)
+        ->where('status', 1)
+        ->take(4)
+        ->get();
+
+    return view('shop.show', compact(
+        'product',
+        'relatedProducts'
+    ));
+}
 
     /**
      * Products by Category

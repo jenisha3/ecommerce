@@ -7,167 +7,177 @@
 <div class="max-w-7xl mx-auto">
 
     <!-- Welcome Card -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg text-white p-8 mb-8">
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-lg p-8 text-white mb-8">
 
         <h1 class="text-4xl font-bold">
-            Customer Dashboard
+            Welcome back, {{ auth()->user()->name }} 👋
         </h1>
 
-        <p class="mt-2 text-lg">
-            Welcome,
-            <span class="font-semibold">
-                {{ auth()->user()->name }}
-            </span>
-        </p>
-
-        <p class="mt-1 text-blue-100">
-            {{ auth()->user()->email }}
+        <p class="mt-3 text-blue-100">
+            Manage your orders, wishlist, cart and account information from your dashboard.
         </p>
 
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-        <!-- Sidebar -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
+        <!-- Orders -->
+        <div class="bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
 
-            <h2 class="text-xl font-bold mb-6 border-b pb-3">
-                Customer Menu
-            </h2>
+            <div class="flex justify-between items-center">
 
-            <nav class="space-y-3">
+                <div>
 
-                <a href="{{ route('dashboard') }}"
-                   class="block bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg">
+                    <p class="text-gray-500">
+                        Total Orders
+                    </p>
 
-                    Dashboard
-
-                </a>
-
-                
-                <a href="{{ route('orders.index') }}"
-                   class="block hover:bg-gray-100 px-4 py-3 rounded-lg">
-
-                    My Orders
-
-                </a>
-
-                <a href="{{ route('cart.index') }}"
-                   class="block hover:bg-gray-100 px-4 py-3 rounded-lg">
-
-                    My Cart
-
-                </a>
-
-                <a href="{{ route('profile.edit') }}"
-                    class="block hover:bg-gray-100 px-4 py-3 rounded-lg">
-    Edit Profile
-</a>
-
-                <form action="{{ route('logout') }}"
-                      method="POST">
-
-                    @csrf
-
-                    <button
-                        class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg">
-
-                        Logout
-
-                    </button>
-
-                </form>
-
-            </nav>
-
-        </div>
-
-        <!-- Main Content -->
-        <div class="lg:col-span-3">
-
-            <!-- Dashboard Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                <div class="bg-white rounded-xl shadow-lg p-6">
-
-                    <div class="text-gray-500">
-                        Orders
-                    </div>
-
-                    <div class="text-4xl font-bold mt-2 text-blue-600">
+                    <h2 class="text-4xl font-bold text-blue-600 mt-2">
 
                         {{ auth()->user()->orders()->count() }}
 
-                    </div>
+                    </h2>
 
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="text-5xl">
+                    📦
+                </div>
 
-                    <div class="text-gray-500">
+            </div>
+
+        </div>
+
+        <!-- Cart -->
+        <div class="bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
+
+            <div class="flex justify-between items-center">
+
+                <div>
+
+                    <p class="text-gray-500">
                         Cart Items
-                    </div>
+                    </p>
 
-                    <div class="text-4xl font-bold mt-2 text-green-600">
+                    <h2 class="text-4xl font-bold text-green-600 mt-2">
 
                         {{ auth()->user()->carts()->count() }}
 
-                    </div>
+                    </h2>
 
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="text-5xl">
+                    🛒
+                </div>
 
-                    <div class="text-gray-500">
-                        Account
-                    </div>
+            </div>
 
-                    <div class="text-xl font-bold mt-3 text-purple-600">
+        </div>
+
+        <!-- Account -->
+        <div class="bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
+
+            <div class="flex justify-between items-center">
+
+                <div>
+
+                    <p class="text-gray-500">
+                        Account Status
+                    </p>
+
+                    <h2 class="text-2xl font-bold text-purple-600 mt-2">
 
                         Active
 
-                    </div>
+                    </h2>
+
+                </div>
+
+                <div class="text-5xl">
+                    👤
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Account Information -->
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+
+        <div class="flex justify-between items-center mb-6">
+
+            <h2 class="text-2xl font-bold">
+
+                Account Information
+
+            </h2>
+
+            <a href="{{ route('profile.edit') }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
+
+                Edit Profile
+
+            </a>
+
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div>
+
+                <label class="text-gray-500 text-sm">
+                    Full Name
+                </label>
+
+                <div class="mt-2 p-4 rounded-lg bg-gray-50 font-semibold text-lg">
+
+                    {{ auth()->user()->name }}
 
                 </div>
 
             </div>
 
-            <!-- Account Information -->
-            <div class="bg-white rounded-xl shadow-lg p-8 mt-8">
+            <div>
 
-                <h2 class="text-2xl font-bold mb-6">
-                    Account Information
-                </h2>
+                <label class="text-gray-500 text-sm">
+                    Email Address
+                </label>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="mt-2 p-4 rounded-lg bg-gray-50 font-semibold text-lg">
 
-                    <div>
+                    {{ auth()->user()->email }}
 
-                        <label class="text-gray-500">
-                            Full Name
-                        </label>
+                </div>
 
-                        <div class="font-semibold text-lg">
+            </div>
 
-                            {{ auth()->user()->name }}
+            <div>
 
-                        </div>
+                <label class="text-gray-500 text-sm">
+                    Phone Number
+                </label>
 
-                    </div>
+                <div class="mt-2 p-4 rounded-lg bg-gray-50">
 
-                    <div>
+                    {{ auth()->user()->phone ?? 'Not Added' }}
 
-                        <label class="text-gray-500">
-                            Email
-                        </label>
+                </div>
 
-                        <div class="font-semibold text-lg">
+            </div>
 
-                            {{ auth()->user()->email }}
+            <div>
 
-                        </div>
+                <label class="text-gray-500 text-sm">
+                    Address
+                </label>
 
-                    </div>
+                <div class="mt-2 p-4 rounded-lg bg-gray-50">
+
+                    {{ auth()->user()->address ?? 'Not Added' }}
 
                 </div>
 

@@ -26,4 +26,21 @@ class Product extends Model
 {
     return $this->hasMany(Cart::class);
 }
+    public function reviews()
+{
+    return $this->hasMany(Review::class);
+}
+public function averageRating()
+{
+    return round($this->reviews()->avg('rating'), 1);
+}
+
+public function totalReviews()
+{
+    return $this->reviews()->count();
+}
+public function wishlists()
+{
+    return $this->hasMany(Wishlist::class);
+}
 }
