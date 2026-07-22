@@ -9,6 +9,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Jobs\SendOrderEmailJob;
 
 class CheckoutController extends Controller
 {
@@ -116,8 +117,8 @@ class CheckoutController extends Controller
         Cart::where('user_id', Auth::id())->delete();
 
         // Send Order Confirmation Email
-        Mail::to($order->email)->send(new OrderPlacedMail($order));
-
+        //Mail::to($order->email)->send(new OrderPlacedMail($order));
+            SendOrderEmailJob::dispatch($order);
         // Redirect
         return redirect()
             ->route('orders.show', $order->id)
